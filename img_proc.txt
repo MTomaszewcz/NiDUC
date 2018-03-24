@@ -1,0 +1,143 @@
+from random import randint
+import numpy as np
+from skimage import data, io, filters
+import math
+import random
+
+#dec to bin
+def to_bin(x):
+    return int(bin(x)[2:])
+####################################################
+#    do dzielenia modulo
+def fun(a, b):
+    if a == 0:
+        return (b, 0, 1)
+    else:
+        g, y, x = fun(b % a, a)
+        return (g, x - (b // a) * y, y)
+
+def mod(a, m):
+    g, x, y = fun(a, m)
+    return x % m
+#######################################################################################
+
+print("hello world!")
+    
+from PIL import Image
+img = Image.open("jsos.jpg") #jpg, png, etc.
+
+#img.width, img.heoight
+
+tablicaa = img.load() # przechowuje bajty
+tablica = []
+tab = [] #przechowuje bity
+wieksza_tablica = []
+
+
+
+
+for i in range(0, img.width):
+    for j in range(0, img.height):        
+        tablica.append(tablicaa[i, j]) 
+        
+        
+print(tablica[455778])        
+print("oto dlugosc tablicy: " + str(len(tablica)))
+
+for j in range(0,len(tablica)):
+    tablica[j]=to_bin(tablica[j])
+    
+print("oto dlugosc tablicy: " + str(len(tablica)))
+    
+    
+    
+for i in range(0, len(tablica)):
+    for j in range(0, 8):
+        element = mod(tablica[i], 10)       
+        tablica[i]=tablica[i]/10;
+        tablica[i]=math.floor(tablica[i])
+        wieksza_tablica.append(element)
+        
+    for z in range(0, len(wieksza_tablica)):
+        tab.append(wieksza_tablica[len(wieksza_tablica)-1-z])
+        
+    del wieksza_tablica [:]
+    
+#print(tab) w zmiennej tab mamy tablice z BITAMI z obrazka
+          
+    
+pstwo_g_b = 2 # % pstwo, ze ze stanu dobrego w zly
+
+pstwo_b_g = 20 # % pstwo, ze ze zlego w dobry
+
+pstwo_g_g = 100-pstwo_g_b # %z dobrego w dobry
+
+pstwo_b_b = 100-pstwo_b_g # % ze zlego w zly
+    
+
+was_error = 0 # zmienna was_error inforuje w jakim teraz jestesmy stanie true w Good; false w Bad
+
+random.seed(42)
+
+counter=0;
+
+#domylnie mamy stan Good
+
+for i in range(0, len(tab)):
+    
+    bul = randint(1, 100)
+    
+    if was_error == 1:#gdy jestesmy w Bad
+        tab[i] = mod(tab[i]+1, 2)
+        counter+=1;
+        
+        if bul<=pstwo_b_g:
+            was_error  = 0  
+            
+    
+    if was_error == 0:# gdy jestesmy w Good
+        if bul<= pstwo_g_b:
+            was_error = 1
+            
+print("\ntyle bylo bledow " + str(counter)+ "\n")
+print("oto licznosc tablicy " + str(len(tab)))
+
+#nowa tablica bajtów
+bytes = []
+
+liczba=0
+osiem=0
+
+for i in range(0, len(tab)):
+    
+    if(osiem <7):
+        liczba+=tab[i]*math.pow(2, 7-osiem)
+        osiem+=1
+    else:
+        bytes.append(liczba)
+        osiem=0
+        liczba=0
+print(bytes[455778])
+        
+        
+
+
+
+
+
+
+
+        
+       # if tablica[i, j]+40 >255:
+            #tablica[i, j] = 80
+       # else:
+          #  tablica[i, j]+=80
+
+
+img.save("out.jpg") # Saves the modified pixels to image 
+    
+
+
+
+
+    
